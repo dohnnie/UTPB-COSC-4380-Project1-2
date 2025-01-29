@@ -4,14 +4,41 @@ import java.util.Locale;
 public abstract class Cipher {
     char[] lowercaseAlpha = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
     char[] uppercaseAlpha = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-    char[] numbers = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-    char[] symbols = {'@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '-', '_', '=', '+', '<', '>', '|', '\\', '`', '~'};
-    char[] punctuation = {'.', ',', '!', '?', '\'', '\"', ';', ':', '/'};
-    char[] whitespace = {' ', '\t', '\n', '\r'};
+    public char[] numbers = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    public char[] symbols = {'@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '-', '_', '=', '+', '<', '>', '|', '\\', '`', '~'};
+    public char[] punctuation = {'.', ',', '!', '?', '\'', '\"', ';', ':', '/'};
+    public char[] whitespace = {' ', '\t', '\n'};
     protected ArrayList<Character> alphabet;
 
-    public Cipher() {
+    public Cipher() {}
 
+    void swap(char[] alpha) {
+        int a = (int)(Math.random() * alpha.length);
+        int b = (int)(Math.random() * alpha.length);
+        char c = alpha[a];
+        alpha[a] = alpha[b];
+        alpha[b] = c;
+    }
+
+    void scramble(char[] alpha) {
+        for(int i = 0; i < alpha.length; i++) {
+            for (int j = 0; j < alpha.length; j++) {
+                swap(alpha);
+            }
+        }
+    }
+
+    ArrayList<Character> getPermutation() {
+        ArrayList<Character> p = new ArrayList<>();
+        char[] alpha = new char[alphabet.size()];
+        for (int i = 0; i < alpha.length; i++) {
+            alpha[i] = alphabet.get(i);
+        }
+        scramble(alpha);
+        for (char c : alpha) {
+            p.add(c);
+        }
+        return p;
     }
 
     char[] getAlphabet(String name) {
@@ -50,6 +77,11 @@ public abstract class Cipher {
         return true;
     }
 
+    boolean validate(char c) {
+        return alphabet.contains(c);
+    }
+
     public abstract String encrypt(String plaintext);
     public abstract String decrypt(String ciphertext);
+    public abstract void crack(String ciphertext);
 }

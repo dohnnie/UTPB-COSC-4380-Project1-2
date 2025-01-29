@@ -59,13 +59,7 @@ public class CaesarCipher extends Cipher {
         for (int i = 0; i < alphabet.size(); i++) {
             key = i;
             String plaintext = decrypt(ciphertext);
-            String[] words = plaintext.split(Pattern.quote(" "));
-            int validWordCount = 0;
-            for (String word: words) {
-                if (d.isWord(word)) {
-                    validWordCount += 1;
-                }
-            }
+            int validWordCount = Dictionary.wordCount(plaintext);
             if (validWordCount > bestWordCount) {
                 bestPlaintext = plaintext;
                 bestWordCount = validWordCount;

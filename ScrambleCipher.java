@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ScrambleCipher extends Cipher {
 
@@ -47,20 +49,70 @@ public class ScrambleCipher extends Cipher {
         return plaintext.toString();
     }
 
-    @Override
-    public void crack(String ciphertext) {
+    Map<Character, Double> getFrequencies(String ciphertext) {
         char[] chars = ciphertext.toCharArray();
         HashMap<Character, Integer> letterCounts = new HashMap<>();
+        double totalLength = 0.0;
         for (char c : chars) {
-            if (!letterCounts.containsKey(c)) {
-                letterCounts.put(c, 0);
-            }
-            int count = letterCounts.get(c);
+            int count = letterCounts.getOrDefault(c, 0);
             count += 1;
             letterCounts.put(c, count);
+            totalLength += 1.0;
         }
+        Map<Character, Double> letterFrequencies = new HashMap<>();
         for (char c : letterCounts.keySet()) {
-            System.out.printf("%c: %d%n", c, letterCounts.get(c));
+            double freq = letterCounts.get(c) / totalLength;
+            letterFrequencies.put(c, freq);
+        }
+        return letterFrequencies;
+    }
+
+    Map<Character, Character> getInitialMapping(Map<Character, Double> freqs, Map<Character, Character> guesses) {
+        List<Map.Entry<Character, Double>> cipherList = new ArrayList<>(freqs.entrySet());
+        List<Map.Entry<Character, Double>> englishList = new ArrayList<>(LetterFrequency.frequencies.entrySet());
+
+        // Sort both lists by frequency (descending)
+        cipherList.sort((a, b) -> Double.compare(b.getValue(), a.getValue()));
+        englishList.sort((a, b) -> Double.compare(b.getValue(), a.getValue()));
+
+        Map<Character, Character> mapping = new HashMap<>();
+        for (int i = 0; i < Math.min(cipherList.size(), englishList.size()); i++) {
+            mapping.put(cipherList.get(i).getKey(), englishList.get(i).getKey());
+        }
+
+        return mapping;
+    }
+
+    void swap(Map<Character, Character> mapping, char a, char b) {
+        char c = mapping.get(a);
+        mapping.put(a, mapping.get(b));
+        mapping.put(b, c);
+    }
+
+    public void crack(String ciphertext, Map<Character, Character> guesses) {
+        Map<Character, Double> freqs = getFrequencies(ciphertext);
+        Map<Character, Character> mapping = getInitialMapping(freqs, guesses);
+        for(char i : mapping.keySet()) {
+            for (char j : mapping.keySet()) {
+                StringBuilder decrypted = new StringBuilder();
+                for (char c : ciphertext.toCharArray()) {
+                    if (guesses.containsKey(c)) {
+                        decrypted.append(guesses.get(c));
+                        continue;
+                    }
+                    if (!mapping.containsKey(c)) {
+                        decrypted.append(c);
+                        continue;
+                    }
+                    decrypted.append(mapping.get(c));
+                }
+                int wordCount = Dictionary.wordCount(decrypted.toString());
+                System.out.printf("%d %s%n", wordCount, decrypted);
+                if (wordCount > 3) {
+                    break;
+                }
+                swap(mapping, i, j);
+            }
         }
     }
 
@@ -81,6 +133,8 @@ public class ScrambleCipher extends Cipher {
         System.out.println(ciphertext);
         //String decrypted = cipher.decrypt(ciphertext);
         //System.out.println(decrypted);
-        cipher.crack(ciphertext);
+        Map<Character, Character> guesses = new HashMap<>();
+        guesses.put('v', '.');
+        cipher.crack(ciphertext, guesses);
     }
 }

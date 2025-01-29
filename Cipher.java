@@ -83,5 +83,5 @@ public abstract class Cipher {
 
     public abstract String encrypt(String plaintext);
     public abstract String decrypt(String ciphertext);
-    public abstract void crack(String ciphertext);
+    //public abstract void crack(String ciphertext);
 }

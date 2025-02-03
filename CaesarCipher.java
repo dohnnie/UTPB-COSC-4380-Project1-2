@@ -10,6 +10,14 @@ public class CaesarCipher extends Cipher {
         alphabet = getAlphabet(new String[] {"lower"});
     }
 
+    public CaesarCipher(int k, String a) {
+        key = k;
+        alphabet = new ArrayList<>();
+        for (char c : a.toCharArray()) {
+            alphabet.add(c);
+        }
+    }
+
     public CaesarCipher(int k, String[] names) {
         key = k;
         alphabet = getAlphabet(names);
@@ -51,6 +59,14 @@ public class CaesarCipher extends Cipher {
         return plaintext.toString();
     }
 
+    public void enumerate(String ciphertext) {
+        for (int i = 0; i < alphabet.size(); i++) {
+            key = i;
+            String plaintext = decrypt(ciphertext);
+            System.out.printf("%d:\t%s%n", key, plaintext);
+        }
+    }
+
     public void crack(String ciphertext) {
         Dictionary d = new Dictionary();
         String bestPlaintext = "";
@@ -71,7 +87,8 @@ public class CaesarCipher extends Cipher {
 
     public static void main(String[] args) {
         //int k = (int)(Math.random() * 30 + 13);
-        CaesarCipher cipher = new CaesarCipher(0, new String[] {"lower", "upper", "punctuation", "whitespace", "symbols"});
+        //CaesarCipher cipher = new CaesarCipher(0, new String[] {"lower", "upper", "punctuation", "whitespace", "symbols"});
+        CaesarCipher cipher = new CaesarCipher(0, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 []\"`=$.|<>");
         //String plaintext = "The quick brown fox jumped over the lazy dogs.";
         //System.out.println(plaintext);
         //String ciphertext = cipher.encrypt(plaintext);
@@ -79,6 +96,6 @@ public class CaesarCipher extends Cipher {
         System.out.println(ciphertext);
         //String decrypt = cipher.decrypt(ciphertext);
         //System.out.println(decrypt);
-        cipher.crack(ciphertext);
+        cipher.enumerate(ciphertext);
     }
 }

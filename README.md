@@ -1,12 +1,12 @@
 # UTPB-COSC-4380-Project1
 This repo contains the assignment and provided code base for Projects 1 and 2 of the Cryptography class.
 
-The goals of these projects are:
+## Project Goals:
 1) Improve understanding of coding in Java and/or Python as a method of accomplishing simple tasks and solving relatively simple problems.
 2) Improve understanding of some of the more analog enciphering techniques we're discussing in class.
 3) Gain experience with converting a known pen-and-paper technique to a valid code implementation.
 
-Description:
+## Description:
 For Project 1, I am asking you to produce either a Java or Python implementation of a polyalphabetic cipher.  I must be implemented as a class which is instantiable as a callable object and has at least the following three functions exposed as an interface:
  * getKey() generates a random key for use when performing the encrypt and decrypt operations, both saving the key as a member variable of the object and returning a copy of the key
  * encrypt() accepts a plaintext string and applies the internally stored key to generate a ciphertext string, which it returns
@@ -19,12 +19,12 @@ For Project 2, I am asking you to use either the provided Java code or the provi
  * Prints out the key used to generate the ciphertext
  * Returns the original plaintext string
 
-Grading criteria:
+## Grading Criteria:
 1) If the final code uploaded to your repo does not compile, the grade is zero.
 2) If the code crashes due to forseeable unhandled exceptions, the grade is zero.
 3) For full points, the code should implement the algorithms and interfaces as described, and all interfaces should be easy to use and not unnecessarily complicated.
 
-Deliverables:
+## Deliverables:
 For Project 1, a program written in either Java or Python which implements the requirements as specified, along with some documentation of the process involved in writing the code and any resources referenced.
 
 For Project 2, a crack() method which provides the required outputs, along with some documentation of the process involved and any resources referenced.

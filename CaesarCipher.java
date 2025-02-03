@@ -93,6 +93,7 @@ public class CaesarCipher extends Cipher {
         //System.out.println(plaintext);
         //String ciphertext = cipher.encrypt(plaintext);
         String ciphertext = "]31iO=3OP27\"T6vO]31iO=3OP27\"T6vO`WP8o7OV32TO\"X8WO8WP8OQ3$tO.O\"32ST6CO|39O]><iO=3OP27\"T6v";//"hxd fruu ansxrln cx qnja cqjc wx mrbjbcna qjb jllxvyjwrnm cqn lxvvnwlnvnwc xo jw nwcnayarbn fqrlq hxd qjen anpjamnm frcq bdlq neru oxankxmrwpb.";
+        String secondCipher = "xtmvrtwpcprtbltxyprxtmvrtwpmbgrtbltxyprxtmvrtwpvspblmxrfbyxtmvrtwpvspbllbbjxrwaprrxtmvrtwppubqwblcpjxplxtmvrtwppubqwblxaqgpfzjxtn";
         System.out.println(ciphertext);
         //String decrypt = cipher.decrypt(ciphertext);
         //System.out.println(decrypt);

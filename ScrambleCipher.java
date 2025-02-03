@@ -130,11 +130,20 @@ public class ScrambleCipher extends Cipher {
         //System.out.println(plaintext);
         //String ciphertext = cipher.encrypt(plaintext);
         String ciphertext = "]31iO=3OP27\"T6vO]31iO=3OP27\"T6vO`WP8o7OV32TO\"X8WO8WP8OQ3$tO.O\"32ST6CO|39O]><iO=3OP27\"T6v";
-        System.out.println(ciphertext);
+        String secondCipher = "xtmvrtwpcprtbltxyprxtmvrtwpmbgrtbltxyprxtmvrtwpvspblmxrfbyxtmvrtwpvspbllbbjxrwaprrxtmvrtwppubqwblcpjxplxtmvrtwppubqwblxaqgpfzjxtn";
+        //System.out.println(ciphertext);
+        System.out.println(secondCipher);
+        Map<Character, Double> freqs = cipher.getFrequencies(secondCipher);
+        List<Map.Entry<Character, Double>> cipherList = new ArrayList<>(freqs.entrySet());
+        cipherList.sort((a, b) -> Double.compare(b.getValue(), a.getValue()));
+        for (Map.Entry<Character, Double> e : cipherList) {
+            System.out.printf("%c %.2f%n", e.getKey(), e.getValue());
+        }
+
         //String decrypted = cipher.decrypt(ciphertext);
         //System.out.println(decrypted);
         Map<Character, Character> guesses = new HashMap<>();
-        guesses.put('v', '.');
-        cipher.crack(ciphertext, guesses);
+        //guesses.put('v', '.');
+        //cipher.crack(ciphertext, guesses);
     }
 }

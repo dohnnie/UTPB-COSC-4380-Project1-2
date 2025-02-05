@@ -23,6 +23,15 @@ public class CaesarCipher extends Cipher {
         alphabet = getAlphabet(names);
     }
 
+    public CaesarCipher(int k, ArrayList<Character> a) {
+        key = k;
+        alphabet = a;
+    }
+
+    public void setKey(int k) {
+        key = k;
+    }
+
     public String encrypt(String plaintext) {
         char[] chars = plaintext.toCharArray();
         StringBuilder ciphertext = new StringBuilder();

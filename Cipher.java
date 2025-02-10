@@ -2,12 +2,12 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public abstract class Cipher {
-    public char[] lowercaseAlpha = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-    public char[] uppercaseAlpha = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
-    public char[] numbers = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-    public char[] symbols = {'@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '-', '_', '=', '+', '<', '>', '|', '\\', '`', '~'};
-    public char[] punctuation = {'.', ',', '!', '?', '\'', '\"', ';', ':', '/'};
-    public char[] whitespace = {' ', '\t', '\n'};
+    public static char[] lowercaseAlpha = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+    public static char[] uppercaseAlpha = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+    public static char[] numbers = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+    public static char[] symbols = {'@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '-', '_', '=', '+', '<', '>', '|', '\\', '`', '~'};
+    public static char[] punctuation = {'.', ',', '!', '?', '\'', '\"', ';', ':', '/'};
+    public static char[] whitespace = {' ', '\t', '\n'};
     protected ArrayList<Character> alphabet;
 
     public Cipher() {}
@@ -41,7 +41,7 @@ public abstract class Cipher {
         return p;
     }
 
-    char[] getAlphabet(String name) {
+    public static char[] getAlphabet(String name) {
         return switch (name.toLowerCase()) {
             case "lowercasealpha", "lowercase", "lower" -> lowercaseAlpha;
             case "uppercasealpha", "uppercase", "upper" -> uppercaseAlpha;
@@ -53,14 +53,14 @@ public abstract class Cipher {
         };
     }
 
-    ArrayList<Character> concatAlphabet(ArrayList<Character> a, char[] b) {
+    public static ArrayList<Character> concatAlphabet(ArrayList<Character> a, char[] b) {
         for (char c : b) {
             a.add(c);
         }
         return a;
     }
 
-    ArrayList<Character> getAlphabet(String[] names) {
+    public static ArrayList<Character> getAlphabet(String[] names) {
         ArrayList<Character> a = new ArrayList<>();
         for (String name : names) {
             a = concatAlphabet(a, getAlphabet(name));

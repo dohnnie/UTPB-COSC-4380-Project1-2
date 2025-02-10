@@ -8,8 +8,8 @@ This repo contains the assignment and provided code base for Projects 1 and 2 of
 2) Improve understanding of some of the more analog enciphering techniques we're discussing in class.
 
 ### Description:
-For Project 1, I am asking you to produce either a Java or Python implementation of a polyalphabetic cipher.  I must be implemented as a class which is instantiable as a callable object and has at least the following three functions exposed as an interface:
- * getKey() generates a random key for use when performing the encrypt and decrypt operations, both saving the key as a member variable of the object and returning a copy of the key
+For Project 1, I am asking you to produce either a Java or Python implementation of a polyalphabetic cipher.  I must be implemented as a class which is instantiable as a callable object and has at least the following functions exposed as an interface:
+ * getBeta() returns the char[][] matrix used to create the mapping of c = p+k and p = c+k that we use for encryption and decryption.  Since the exact same beta matrix is required to decrypt a message if we want to run this code more than once, we need a way to retrieve the matrix from the application and store it externally.  We will similarly need a method of setting the matrix for a given instance of the cipher class, but the best method for this is probably to pass a char[][] or similar object as a parameter to a constructor
  * encrypt() accepts a plaintext string and applies the internally stored key to generate a ciphertext string, which it returns
  * decrypt() accepts a ciphertext string and performs the inverse of the encrypt operation, returning the original plaintext string
 In order to accomplish this, the constructor for the class should accept the cipher's alphabet as a parameter.  Both the alphabet and the key should be stored as member variables within the class instance.  It will probably also be necessary to allow the getKey() method to be called in a static context and provide a constructor override which accepts a key as a parameter, as for security reasons the key variable should likely be declared both private and final.

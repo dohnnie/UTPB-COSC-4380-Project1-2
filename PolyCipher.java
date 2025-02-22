@@ -141,7 +141,6 @@ public class PolyCipher extends Cipher {
     public void storeBeta() {
         String outputName = "matrix.csv"; // Name of the file that stores our random beta matrix
 
-        
         for (int row = 0; row < square.length; row++) {
             char[] betaRow = this.square[row];
             System.out.println(betaRow);
@@ -159,11 +158,13 @@ public class PolyCipher extends Cipher {
         PolyCipher cipher = new PolyCipher(key, alphas);
         //System.out.println(key);
         cipher.generateSquare();
-        cipher.printSquare();
+        //cipher.printSquare();
         cipher.scrambleSquare();
-        cipher.printSquare();
-        System.out.println("\n\n\n");
+        //cipher.printSquare();
+        //System.out.println("\n\n\n");
         cipher.storeBeta();
+        String ciphertext = cipher.encrypt(plaintext);
+        System.out.println(ciphertext);
         
     }
 }

@@ -49,6 +49,7 @@ public class PolyCipher extends Cipher {
          */
     @Override
     public String encrypt(String plaintext) {
+        plaintext = clean(plaintext);
         String output = "";
         int squareCount = 0;
         for(char c : plaintext.toCharArray()) {
@@ -59,6 +60,10 @@ public class PolyCipher extends Cipher {
                 squareCount = 0;
         }
         return output;
+    }
+
+    public static String clean(String plaintext) {
+        return plaintext.replaceAll(" ", "");
     }
 
     @Override
@@ -163,6 +168,7 @@ public class PolyCipher extends Cipher {
         //cipher.printSquare();
         //System.out.println("\n\n\n");
         cipher.storeBeta();
+        System.out.println(plaintext);
         String ciphertext = cipher.encrypt(plaintext);
         System.out.println(ciphertext);
         

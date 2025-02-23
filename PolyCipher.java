@@ -68,7 +68,7 @@ public class PolyCipher extends Cipher {
             output += cipherChar;
             
             // Logic to loop around the pointer as needed over our key.
-            if (keyIndexCounter >= this.key.length()) {
+            if (keyIndexCounter >= this.key.length() - 1) {
                 keyIndexCounter = 0;
             } else {
                 keyIndexCounter++;
@@ -259,11 +259,14 @@ public class PolyCipher extends Cipher {
         cipher.getBeta();
         cipher2.getBeta();
         String ciphertext = cipher.encrypt("Cameron Glenn, Johnny Ngo, Kevin Franco");
+        String ciphertext2 = cipher2.encrypt("Cameron Glenn, Johnny Ngo, Kevin Franco");
         System.out.println(ciphertext);
         String output = cipher.decrypt(ciphertext);
         System.out.println(output);
         String output2 = cipher2.decrypt(ciphertext);
         System.out.println(output2);
+        String output3 = cipher2.decrypt(ciphertext2);
+        System.out.println(output3);
         // cipher.printSquare();
         // System.out.println("\n\n\n\n");
         // System.out.println(PolyCipher.clean(plaintext));

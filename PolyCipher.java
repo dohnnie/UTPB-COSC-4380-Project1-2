@@ -84,12 +84,10 @@ public class PolyCipher extends Cipher {
 
         // Iterate over each character of our cleaned plaintext, and encrypt it with the appropriately matching character from our key
         for(char c : ciphertext.toCharArray()) {
-            
             char betaIndexChar = this.key.charAt(keyIndexCounter);
             int betaIndex = convert(betaIndexChar);
-            System.out.println(betaIndex);
             char[] currentCipher = this.square[betaIndex];
-            System.out.println(currentCipher);
+    
             String currentCipherString = new String(currentCipher);
             int plainTextIndex = currentCipherString.indexOf(c);
             char plainTextChar = convert(plainTextIndex);
@@ -97,7 +95,7 @@ public class PolyCipher extends Cipher {
             output += plainTextChar;
             
             // Logic to loop around the pointer as needed over our key.
-            if (keyIndexCounter >= this.key.length()) {
+            if (keyIndexCounter >= (this.key.length() - 1)) {
                 keyIndexCounter = 0;
             } else {
                 keyIndexCounter++;
@@ -259,6 +257,7 @@ public class PolyCipher extends Cipher {
         PolyCipher cipher2 = new PolyCipher("asdas asdasd", alphas);
         // Retrieve our betaMatrix from matrix.csv
         cipher.getBeta();
+        cipher2.getBeta();
         String ciphertext = cipher.encrypt("Cameron Glenn, Johnny Ngo, Kevin Franco");
         System.out.println(ciphertext);
         String output = cipher.decrypt(ciphertext);

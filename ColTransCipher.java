@@ -1,19 +1,29 @@
+/* Columnar Transposition Cipher
+ * Created by: Cameron Glenn, Johnny Ngo, and Kevin Franco
+ * March 23, 2025
+ */
+
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ColTransCipher extends Cipher {
 
     ArrayList<Character> key = new ArrayList<>();
     ArrayList<Character> keyOrder = new ArrayList<>();
-    private boolean padding = true;
 
-    private boolean debug = false;
+    // Controls
+    private boolean padding = true; // Controls padding of null characters
 
+    private boolean debug = false; // Controls debug output (verbose)
+
+    ////////////////////////////////////////////////////////////////////
+    /// Constructors                                                  //
+    ////////////////////////////////////////////////////////////////////
+    
     public ColTransCipher(int k, String[] names, boolean ascending, boolean strict) {
         if (names == null) {
-            alphabet = getAlphabet(new String[] {"lower"});
+            ArrayList<Character> alphabet = getAlphabet(new String[] {"lower"});
         } else {
-            alphabet = Cipher.getAlphabet(names);
+            ArrayList<Character> alphabet = Cipher.getAlphabet(names);
         }
         String t = "" + k;
         if (strict) {
@@ -25,9 +35,9 @@ public class ColTransCipher extends Cipher {
 
     public ColTransCipher(int[] k, String[] names, boolean ascending, boolean strict) {
         if (names == null) {
-            alphabet = getAlphabet(new String[] {"lower"});
+            this.alphabet = getAlphabet(new String[] {"lower"});
         } else {
-            alphabet = Cipher.getAlphabet(names);
+            this.alphabet = Cipher.getAlphabet(names);
         }
         StringBuilder sb = new StringBuilder();
         for (int i : k) {
@@ -42,9 +52,9 @@ public class ColTransCipher extends Cipher {
 
     public ColTransCipher(String k, String[] names, boolean ascending, boolean strict) {
         if (names == null) {
-            alphabet = getAlphabet(new String[] {"lower"});
+            this.alphabet = getAlphabet(new String[] {"lower"});
         } else {
-            alphabet = Cipher.getAlphabet(names);
+            this.alphabet = Cipher.getAlphabet(names);
         }
         if (strict) {
             setKey(sanitize(k), ascending);
@@ -53,6 +63,15 @@ public class ColTransCipher extends Cipher {
         }
     }
 
+    ////////////////////////////////////////////////////////////////////
+    /// Functions                                                     //
+    ////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Sanitize the key by removing spaces, newlines, carriage returns, and tabs.
+     * @param k The key or text to sanitize.
+     * @return The sanitized key.
+     */
     private String sanitize(String k) {
         String t = k.toLowerCase();
         t = t.replace(" ", "");
@@ -62,6 +81,11 @@ public class ColTransCipher extends Cipher {
         return t;
     }
 
+    /**
+     * Set the key for the cipher.
+     * @param k The key to set
+     * @param ascending Whether to sort the key in ascending order.
+     */
     private void setKey(String k, boolean ascending) {
         char[] chars = k.toCharArray();
         ArrayList<Character> keyList = new ArrayList<>();
@@ -78,16 +102,16 @@ public class ColTransCipher extends Cipher {
             sortedList.sort((a, b) -> Character.compare(b.charValue(), a.charValue()));
         }
 
-        key = keyList;
+        this.key = keyList;
         if (debug) {
             for (char c : key) {
                 System.out.print(c);
             }
             System.out.println();
         }
-        keyOrder = sortedList;
+        this.keyOrder = sortedList;
         if (debug) {
-            for (char c : keyOrder) {
+            for (char c : this.keyOrder) {
                 System.out.print(c);
             }
             System.out.println();
@@ -95,6 +119,11 @@ public class ColTransCipher extends Cipher {
     }
 
     @Override
+    /**
+     * Encrypt the plaintext using the columnar transposition cipher.
+     * @param plaintext The plaintext to encrypt.
+     * @return The encrypted ciphertext.
+     */
     public String encrypt(String plaintext) {
         int cols = key.size();
         int rows = (int)(Math.ceil(plaintext.length() / (double)cols));
@@ -165,6 +194,11 @@ public class ColTransCipher extends Cipher {
     }
 
     @Override
+    /**
+     * Decrypt the ciphertext using the columnar transposition cipher.
+     * @param ciphertext The ciphertext to decrypt.
+     * @return The decrypted plaintext.
+     */
     public String decrypt(String ciphertext) {
         int cols = key.size();
         int rows = (int)(Math.ceil(ciphertext.length() / (double)cols));
@@ -235,11 +269,78 @@ public class ColTransCipher extends Cipher {
         return sb.toString();
     }
 
-    public void crack(String ciphertext) {
+    /**
+     * Splice the ciphertext into each of it's bigrams, returns an ArrayList.
+     * @param ciphertext The ciphertext to splice.
+     * @return ArrayList of Strings for bigrams.
+     */
+    public ArrayList<String> splice(String ciphertext) {
+        ArrayList<String> bigrams = new ArrayList<>();
+        int length = 1;
+        String bigram = "";
+        for(int i = 0; i < ciphertext.length(); i++) {
+           if(length > 2) 
+                bigram = "";
+            
+            bigram += ciphertext.charAt(i);
+        }
+        bigrams.add(bigram);
+        return bigrams;
     }
 
+    /**
+     * Sort the bigrams by frequency. Modifies the ArrayList in place. Removes duplicate bigrams after sorting.
+     * @param bigrams The bigrams to sort.
+     * @return The sorted bigrams. Duplicates should be removed.
+     */
+    public ArrayList<String> sortByFrequency(ArrayList<String> bigrams) {
+        // Sort the bigrams by frequency
+        ArrayList<String> sortedBigrams = new ArrayList<>();
+        
+        return sortedBigrams;
+    }
+
+    /**
+     * Get the bigrams from bigrams.txt and creates a new list matching the passed through bigrams. 
+     * @param cipherBigrams The sorted bigrams from the ciphertext.
+     * @return ArrayList of Strings for bigrams.
+     */
+    public ArrayList<String> getBigrams(ArrayList<String> cipherBigrams) {
+        ArrayList<String> bigrams = new ArrayList<>();
+        
+        return bigrams;
+    }
+
+    /**
+     * Replace the bigrams in the ciphertext with the most common bigrams. Replaces all instances with UPPER CASE.
+     * @param ciphertext The ciphertext to replace bigrams in.
+     * @param cipherBigrams The bigrams from the ciphertext.
+     * @param bigrams The bigrams to replace with.
+     * @return The plaintext.
+     */
+    public String replaceByBigrams(String ciphertext, ArrayList<String> cipherBigrams, ArrayList<String> bigrams) {
+        String plaintext = "";
+        
+        return plaintext;
+    }
+
+    /**
+     * Crack the ciphertext passed to the function.
+     * @param ciphertext The ciphertext to crack.
+     * @return The plaintext.
+     */
+    public void crack(String ciphertext) {
+        
+        // When replacing bigrams with the most common bigrams, replace UPPER CASE.
+        
+    }
+
+    ////////////////////////////////////////////////////////////////////
+    /// Main                                                          //
+    ////////////////////////////////////////////////////////////////////
+    
     public static void main(String[] args) {
-        ColTransCipher ctc = new ColTransCipher("57183", null, true, false);
+        ColTransCipher ctc = new ColTransCipher("35718", null, true, false);
         String plaintext = "thequickbrownfoxjumpedoverthelazydogs";
         System.out.println(plaintext);
         String ciphertext = ctc.encrypt(plaintext);

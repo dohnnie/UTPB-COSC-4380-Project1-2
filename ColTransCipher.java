@@ -276,18 +276,13 @@ public class ColTransCipher extends Cipher {
      */
     public ArrayList<String> splice(String ciphertext) {
         ArrayList<String> bigrams = new ArrayList<>();
-        int length = 1;
-        String bigram = "";
-        for(int i = 0; i < ciphertext.length(); i++) {
-           if(length > 2) {
-                bigram = "";
-                bigrams.add(bigram);
-                length = 1;
-           }
-            
-            bigram += ciphertext.charAt(i);
-            length++;
+        for(int i = 0; i < ciphertext.length(); i++ ) {
+            if(i + 2 < ciphertext.length())
+                bigrams.add(ciphertext.substring(i, i+2));
+            else if(i != ciphertext.length() - 1)
+                bigrams.add(ciphertext.substring(i));
         }
+
         return bigrams;
     }
 
@@ -350,5 +345,9 @@ public class ColTransCipher extends Cipher {
         System.out.println(ciphertext);
         String decrypted = ctc.decrypt(ciphertext);
         System.out.println(decrypted);
+        ArrayList<String> bigrams = ctc.splice("thisisateststring");
+        for(String bigram : bigrams) {
+            System.out.print(bigram + " ");
+        }
     }
 }

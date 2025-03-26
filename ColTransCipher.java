@@ -279,12 +279,15 @@ public class ColTransCipher extends Cipher {
         int length = 1;
         String bigram = "";
         for(int i = 0; i < ciphertext.length(); i++) {
-           if(length > 2) 
+           if(length > 2) {
                 bigram = "";
+                bigrams.add(bigram);
+                length = 1;
+           }
             
             bigram += ciphertext.charAt(i);
+            length++;
         }
-        bigrams.add(bigram);
         return bigrams;
     }
 

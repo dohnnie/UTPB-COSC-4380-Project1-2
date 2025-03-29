@@ -3,7 +3,14 @@
  * March 23, 2025
  */
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ColTransCipher extends Cipher {
 
@@ -274,7 +281,7 @@ public class ColTransCipher extends Cipher {
      * @param ciphertext The ciphertext to splice.
      * @return ArrayList of Strings for bigrams.
      */
-    public ArrayList<String> splice(String ciphertext) {
+    public static ArrayList<String> splice(String ciphertext) {
         ArrayList<String> bigrams = new ArrayList<>();
         for(int i = 0; i < ciphertext.length(); i++ ) {
             if(i + 2 < ciphertext.length())
@@ -287,15 +294,99 @@ public class ColTransCipher extends Cipher {
     }
 
     /**
+     * Sort a HashMap by its values. Only works for Integer values.
+     * @param map The HashMap to sort.
+     * @return A new HashMap sorted by values.
+     */
+    public static HashMap<String, Integer> sortByValue(HashMap<String, Integer> map) {
+        // Convert the map to a list of entries
+        List<HashMap.Entry<String, Integer>> entryList = new ArrayList<>(map.entrySet());
+
+        // Sort the list by values
+        entryList.sort(HashMap.Entry.comparingByValue());
+
+        // Rebuild the sorted map (LinkedHashMap to maintain insertion order)
+        HashMap<String, Integer> sortedMap = new LinkedHashMap<>();
+        for (HashMap.Entry<String, Integer> entry : entryList) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
+
+    /**
+     * Sort a HashMap by its values. Only works for Float values.
+     * @param map The HashMap to sort.
+     * @return A new HashMap sorted by values.
+     */
+    public static HashMap<String, Float> sortByFloatValue(HashMap<String, Float> map) {
+        // Convert the map to a list of entries
+        List<HashMap.Entry<String, Float>> entryList = new ArrayList<>(map.entrySet());
+
+        // Sort the list by values
+        entryList.sort(HashMap.Entry.comparingByValue());
+
+        // Rebuild the sorted map (LinkedHashMap to maintain insertion order)
+        HashMap<String, Float> sortedMap = new LinkedHashMap<>();
+        for (HashMap.Entry<String, Float> entry : entryList) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedMap;
+    }
+
+
+
+    /**
      * Sort the bigrams by frequency. Modifies the ArrayList in place. Removes duplicate bigrams after sorting.
      * @param bigrams The bigrams to sort.
      * @return The sorted bigrams. Duplicates should be removed.
      */
-    public ArrayList<String> sortByFrequency(ArrayList<String> bigrams) {
+    public static HashMap<String, Integer> sortByFrequency(ArrayList<String> bigrams) {
         // Sort the bigrams by frequency
-        ArrayList<String> sortedBigrams = new ArrayList<>();
+        ArrayList<String> encounteredBigrams = new ArrayList<>(); // Stores what bigrams have been encountered
+        HashMap<String, Integer> frequencies = new HashMap<>(); // Stores key value pairs of bigram and frequency.
+
+        // Count the frequency of each bigram
+        for (String bigram : bigrams) {
+            // If the bigram is not already in the sorted list, add it and count its frequency
+            if (!(encounteredBigrams.contains(bigram))) { // New Bigram Encounter
+                encounteredBigrams.add(bigram); // Add the bigram to the list of encountered bigrams
+                frequencies.put(bigram, 1); // Add the first time bigram to the list
+            } else { // Bigram already encountered
+                frequencies.put(bigram, frequencies.get(bigram) + 1); // Increment the frequency of the bigram
+            }
+        }
         
-        return sortedBigrams;
+        return sortByValue(frequencies);
+    }
+
+    /**
+     * Get the total number of bigrams in the ciphertext to enable us to get frequency percentages.
+     * @param frequencies The frequencies of the bigrams.
+     * @return The total number of bigrams.
+     */
+    public static int getTotalBigramCount(HashMap<String, Integer> frequencies) {
+        int total = 0;
+        for (String bigram : frequencies.keySet()) {
+            total += frequencies.get(bigram);
+        }
+        return total;
+    }
+
+    /**
+     * Normalize the frequencies of the bigrams to decimal percentages.
+     * @param frequencies The frequencies of the bigrams.
+     * @return A HashMap of normalized frequencies.
+     */
+    public static HashMap<String, Float> normalizeFrequencies(HashMap<String, Integer> frequencies) {
+        HashMap<String, Float> normalizedFrequencies = new HashMap<>();
+        int total = getTotalBigramCount(frequencies);
+        for (String bigram : frequencies.keySet()) {
+            float frequency = (float) frequencies.get(bigram) / (float) total; // Normalize the frequency
+            normalizedFrequencies.put(bigram, frequency); // Add the normalized frequency to the map
+        }
+        return sortByFloatValue(normalizedFrequencies); // Return the normalized frequencies sorted by value
     }
 
     /**
@@ -323,31 +414,176 @@ public class ColTransCipher extends Cipher {
     }
 
     /**
+     * Load the bigrams from a file and return them as a HashMap.
+     * @param filePath The path to the file containing the bigrams.
+     * @return A HashMap of bigrams and their frequencies.
+     */
+    public static HashMap<String, Float> loadBigrams(String filePath) {
+        HashMap<String, Float> bigramMap = new HashMap<>();
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                // Assuming each line is in the format "bigram frequency"
+                String[] parts = line.split("\\s+");
+                if (parts.length == 2) { // Ensure there are two parts
+                    bigramMap.put(parts[0], Float.parseFloat(parts[1])); // Add the bigram and its frequency to the map
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        return bigramMap;
+    }
+
+    /**
+     * Score the bigrams based on their frequency in the ciphertext and the dictionary. Gets the absolute value of the difference.
+     * @param bigrams The bigrams from the ciphertext.
+     * @param bigramDictionary The dictionary of bigrams and their frequencies.
+     * @return The score of the bigrams.
+     */
+    public static float scoreBigrams(HashMap<String, Float> bigrams, HashMap<String, Float> bigramDictionary) {
+        float totalScore = 0.0f;
+        for (String bigram : bigrams.keySet()) {
+            if (bigramDictionary.containsKey(bigram)) { // Ensure the bigram is in the dictionary
+                // Calculate the score based on the frequency of the bigram in the ciphertext and the dictionary
+                totalScore += Math.abs(bigrams.get(bigram) - bigramDictionary.get(bigram)); // Add the score to the total
+            }
+        }
+        return totalScore;
+    }
+    
+    /**
+     * Get the ciphertext matrix from the ciphertext and key length.
+     * @param ciphertext The ciphertext to get the matrix from.
+     * @param keyLength The length of the key.
+     * @return The ciphertext matrix.
+     */
+    public static char[][] getCiphertextMatrix(String ciphertext, int keyLength) {
+        int rows = (int)(Math.ceil((double)ciphertext.length() / (double)keyLength));
+        char[][] matrix = new char[rows][keyLength];
+        for (int i = 0; i < ciphertext.length(); i++) {
+            matrix[i/keyLength][i%keyLength] = ciphertext.charAt(i);
+        }
+        return matrix;
+    }
+
+    /**
      * Crack the ciphertext passed to the function.
      * @param ciphertext The ciphertext to crack.
      * @return The plaintext.
      */
-    public void crack(String ciphertext) {
+    public static void crack(String ciphertext) {
         
         // When replacing bigrams with the most common bigrams, replace UPPER CASE.
+
+        ArrayList<String> bigrams = splice("thisisateststring");
+
+        HashMap<String, Integer> sortedFrequencies = sortByFrequency(bigrams);
+        
+        System.out.println(sortedFrequencies);
+
+        int total = getTotalBigramCount(sortedFrequencies);
+        System.out.println("Total: " + total);
+
+        HashMap<String, Float> normalizedFrequencies = normalizeFrequencies(sortedFrequencies);
+        System.out.println(normalizedFrequencies);
+
+        HashMap<String, Float> bigramDictionary = loadBigrams("./bigrams.txt"); // Load bigrams from file using relative path
+        System.out.println(bigramDictionary.get("te"));
+
+        float score = scoreBigrams(normalizedFrequencies, bigramDictionary);
+        System.out.println("Score: " + score);
+
+        char[][] matrix = getCiphertextMatrix("abcdefghijklm", 3);
+
+        // Print out matrix of ciphertext
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+        
+        // for(String bigram : bigrams) {
+        //     System.out.print(bigram + " ");
+        // }
         
     }
+
+    public static int findKeyLength(String text) {
+        int maxKeyLength = Math.min(20, text.length() / 2); // Limit the search range
+        double expectedIC = 0.068; // Approximate IC for English text
+        int bestKey = 1;
+        double closestDiff = Double.MAX_VALUE;
+
+        for (int keyLength = 2; keyLength <= maxKeyLength; keyLength++) {
+            double ic = averageIC(text, keyLength);
+            double diff = Math.abs(expectedIC - ic);
+
+            if (diff < closestDiff) {
+                closestDiff = diff;
+                bestKey = keyLength;
+            }
+        }
+
+        return bestKey;
+    }
+
+    private static double averageIC(String text, int keyLength) {
+        double totalIC = 0.0;
+        int validColumns = 0;
+
+        for (int i = 0; i < keyLength; i++) {
+            StringBuilder column = new StringBuilder();
+            for (int j = i; j < text.length(); j += keyLength) {
+                column.append(text.charAt(j));
+            }
+            double ic = calculateIC(column.toString());
+            if (!Double.isNaN(ic)) {
+                totalIC += ic;
+                validColumns++;
+            }
+        }
+
+        return validColumns > 0 ? totalIC / validColumns : 0.0;
+    }
+
+    private static double calculateIC(String text) {
+        if (text.length() < 2) return Double.NaN;
+
+        Map<Character, Integer> freqMap = new HashMap<>();
+        for (char c : text.toCharArray()) {
+            freqMap.put(c, freqMap.getOrDefault(c, 0) + 1);
+        }
+
+        double sum = 0.0;
+        for (int count : freqMap.values()) {
+            sum += count * (count - 1);
+        }
+
+        return sum / (text.length() * (text.length() - 1));
+    }
+
 
     ////////////////////////////////////////////////////////////////////
     /// Main                                                          //
     ////////////////////////////////////////////////////////////////////
     
     public static void main(String[] args) {
-        ColTransCipher ctc = new ColTransCipher("35718", null, true, false);
+        ColTransCipher ctc = new ColTransCipher("2123", null, true, false);
         String plaintext = "thequickbrownfoxjumpedoverthelazydogs";
         System.out.println(plaintext);
         String ciphertext = ctc.encrypt(plaintext);
         System.out.println(ciphertext);
         String decrypted = ctc.decrypt(ciphertext);
         System.out.println(decrypted);
-        ArrayList<String> bigrams = ctc.splice("thisisateststring");
-        for(String bigram : bigrams) {
-            System.out.print(bigram + " ");
-        }
+
+        int length = findKeyLength(ciphertext);
+        System.out.println("Key Length: " + length);
+
+        crack("thisisateststring");
+        
     }
 }
